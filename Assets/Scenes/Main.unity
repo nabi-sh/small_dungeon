@@ -2188,7 +2188,8 @@ GameObject:
   - component: {fileID: 1873448214}
   - component: {fileID: 1873448213}
   - component: {fileID: 1873448216}
-  - component: {fileID: 1873448217}
+  - component: {fileID: 1873448218}
+  - component: {fileID: 1873448219}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -2328,7 +2329,29 @@ MonoBehaviour:
   m_DefaultActionMap: InGame
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
---- !u!114 &1873448217
+--- !u!95 &1873448218
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1873448212}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 841d934aa7f0ec247bf240dabe977678, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &1873448219
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2337,9 +2360,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 1873448212}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0df10ed5df9c8fd45bbd23cc18900b08, type: 3}
+  m_Script: {fileID: 11500000, guid: fa4803b36ea07674faf6640c08f41138, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerControl
 --- !u!1 &2039565748
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,5 +1,12 @@
 fileFormatVersion: 2
 guid: fc4f601adcd0199418603b8a651b7921
+AssetOrigin:
+  serializedVersion: 1
+  productId: 71965
+  packageName: Retro ACT RPG sprite pack 01
+  packageVersion: 1.0
+  assetPath: Assets/ActRPGsprites/documents/doc18.png
+  uploadId: 137809
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
