@@ -6,8 +6,20 @@ using UnityEngine.Rendering;
 
 public class PlayerControl : MonoBehaviour
 {
-    public int health = 5;
-    private float speed = 5f;
+    private int health = 5;
+    public int Health { //ENCAPSULATION
+        get => health;
+        set {
+            if (value > 0)
+            {
+                health = value;
+            } else
+            {
+                health = 0;
+            }
+        }
+    }
+    [SerializeField] private float speed = 5f;
     private Vector2 movement;
     private Rigidbody2D rb;
     private Animator animator;
@@ -46,7 +58,7 @@ public class PlayerControl : MonoBehaviour
     {
         if(timeSinceAttack >= attackCooldown)
         {
-            StartCoroutine("Attack");
+            StartCoroutine("Attack"); // used ABSTRACTION here
             timeSinceAttack = 0;
         }
     }
