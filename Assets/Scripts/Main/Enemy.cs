@@ -1,6 +1,7 @@
 using UnityEngine;
+using UnityEngine.Animations;
 
-enum EnemyState
+public enum EnemyState
 {
     Idle,
     Follow,
@@ -9,16 +10,26 @@ enum EnemyState
 
 public abstract class Enemy : MonoBehaviour
 {
-    private EnemyState enemyState;
-    protected Rigidbody2D rb;
+    public GameObject deathAnimation;
+    public EnemyState enemyState;
+    protected Animator animator;
+    public Rigidbody2D rb;
     protected float speed = 3;
     protected Vector3 homePos;
-    public abstract float AttackDis {get; }
+    public Vector3 playerPos;
+    protected Vector3 movingDir;
+    public bool isHurt = false;
+    public bool isAttacking = false;
+    private float timeSinceEnemyHurt = 0;
+    protected float timeSinceEnemyAttack = 100;
+    private float recoveryTime = 0.6f;
     public abstract int Health {get; set; }
+    
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         homePos = transform.position;
+        animator = GetComponent<Animator>();
     }
 
     void FixedUpdate()
@@ -29,47 +40,56 @@ public abstract class Enemy : MonoBehaviour
                 Idle();
                 break;
             case EnemyState.Follow:
-                /* all follow logic is completed 
-                 * inside of the Follow() method called by
-                 * OnTriggerStay2D
-                 */
+                Follow(playerPos, speed);
                 break;
         }
-    }
 
+        timeSinceEnemyAttack += Time.fixedDeltaTime;
+
+        CheckIfEnemyHurt();
+    }
+    void Update()
+    {
+        CheckIfDead();
+    }
 
     public virtual void Idle()
     {
-        if((transform.position - homePos).magnitude >= 0.5f) //if lost player then go home
+        if((transform.position - homePos).magnitude >= 0.5f && !isHurt && !isAttacking) //if lost player then go home
         {
-            rb.MovePosition(transform.position + (homePos - transform.position).normalized * Time.fixedDeltaTime * speed);
+            rb.linearVelocity = (homePos - transform.position).normalized * speed;
         }
     }
     public virtual void Follow(Vector3 playerPos, float speed)
     {
         Vector3 playerDis = playerPos - transform.position;
-        Vector3 movingDir = playerDis.normalized;
-        rb.MovePosition(transform.position + movingDir * Time.fixedDeltaTime * speed);
-        if (playerDis.magnitude <= AttackDis)
+        movingDir = playerDis.normalized;
+        if (!isHurt && !isAttacking)
         {
-            Attack();
-            return;
+            rb.linearVelocity = movingDir * speed;
+        }
+    }
+    private void CheckIfEnemyHurt()
+    {
+        if (isHurt) {
+            float progress = animator.GetCurrentAnimatorStateInfo(0).normalizedTime % 1f;
+            animator.Play("ThisEnemy_Hurt", 0, progress);
+            timeSinceEnemyHurt += Time.fixedDeltaTime;
+            if (timeSinceEnemyHurt >= recoveryTime)
+            {
+                isHurt = false;
+                timeSinceEnemyHurt = 0;
+            }
+        }
+    }
+    private void CheckIfDead()
+    {
+        if (Health <= 0)
+        {
+            Instantiate(deathAnimation, transform.position, transform.rotation);
+            Destroy(gameObject);
         }
     }
     public abstract void Attack();
-    void OnTriggerStay2D(Collider2D collision)
-    {
-        if (collision.CompareTag("Player"))
-        {
-            Follow(collision.transform.position, speed);
-            enemyState= EnemyState.Follow;
-        }
-    }
-    void OnTriggerExit2D(Collider2D collision)
-    {
-        if (collision.CompareTag("Player"))
-        {
-            enemyState = EnemyState.Idle;
-        }
-    }
+    
 }

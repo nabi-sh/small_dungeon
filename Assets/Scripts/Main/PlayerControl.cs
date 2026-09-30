@@ -6,7 +6,7 @@ using UnityEngine.Rendering;
 
 public class PlayerControl : MonoBehaviour
 {
-    private int health = 5;
+    [SerializeField] private int health = 5;
     public int Health { //ENCAPSULATION
         get => health;
         set {
@@ -21,23 +21,27 @@ public class PlayerControl : MonoBehaviour
     }
     [SerializeField] private float speed = 5f;
     private Vector2 movement;
-    private Rigidbody2D rb;
-    private Animator animator;
-    private float attackCooldown = 0.4f;
+    public Rigidbody2D rb;
+    public Animator animator;
+    private float attackCooldown = 0.5f;
     private float timeSinceAttack = 0;
     private BoxCollider2D attackZone;
+    private GameObject sword;
+    public AudioSource audioSource;
     void Awake()
     {
+        audioSource = GetComponent<AudioSource>();
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
     }
     void Start()
     {
         attackZone = transform.Find("Sword").GetComponent<BoxCollider2D>();
+        sword = transform.Find("Sword").gameObject;
         // Set sword collider size
         attackZone.size = new Vector2 (0.8f, 1.3f);
         attackZone.offset = new Vector2 (0f, -0.5f);
-        attackZone.enabled = false;
+        sword.SetActive(false);
     }
     private void OnMovement(InputValue input)
     {
@@ -58,46 +62,72 @@ public class PlayerControl : MonoBehaviour
     {
         if(timeSinceAttack >= attackCooldown)
         {
-            StartCoroutine("Attack"); // used ABSTRACTION here
+            if (animator.GetFloat("X") > 0)
+            {
+                animator.SetFloat("AttackX", animator.GetFloat("X"));
+                animator.SetFloat("AttackY", 0);
+            } else if (animator.GetFloat("X") < 0)
+            {
+                animator.SetFloat("AttackX", animator.GetFloat("X"));
+                animator.SetFloat("AttackY", 0);
+            } else if (animator.GetFloat("Y") > 0)
+            {
+                animator.SetFloat("AttackX", 0);
+                animator.SetFloat("AttackY", animator.GetFloat("Y"));
+            } else if (animator.GetFloat("Y") <= 0)
+            {
+                animator.SetFloat("AttackX", 0);
+                animator.SetFloat("AttackY", animator.GetFloat("Y"));
+            }
+            animator.SetBool("isAttacking", true);
             timeSinceAttack = 0;
         }
     }
     private void FixedUpdate()
     {
         timeSinceAttack += Time.fixedDeltaTime;
-        if(animator.GetBool("isAttacking") == false) {
+        if (animator.GetBool("isAttacking") && animator.GetBool("IsHurt"))
+        {
+            animator.SetBool("isAttacking",false);
+            Debug.Log("Attack Hurt annimation conflict fixed");
+        }
+        if(!animator.GetBool("isAttacking") && !animator.GetBool("IsHurt")) {
             rb.MovePosition(rb.position + movement * Time.fixedDeltaTime * speed);
         }
     }
-    private IEnumerator Attack()
+    public void StartAttack()
     {
-        animator.SetBool("isAttacking", true);
-        attackZone.enabled = true;
-
-        if (animator.GetFloat("X") > 0)
+        sword.SetActive(true);
+        Debug.Log("ATTACK CALLED BY: " + gameObject.name +
+              " | INSTANCE ID: " + GetInstanceID());
+        
+        if (animator.GetFloat("AttackX") > 0)
         {
             attackZone.size = new Vector2 (1.3f, 0.8f);
             attackZone.offset = new Vector2 (0.8f, 0f);
-        } else if (animator.GetFloat("X") < 0)
+        } else if (animator.GetFloat("AttackX") < 0)
         {
             attackZone.size = new Vector2 (1.3f, 0.8f);
             attackZone.offset = new Vector2 (-0.8f, 0f);
-        } else if (animator.GetFloat("Y") > 0)
+        } else if (animator.GetFloat("AttackY") > 0)
         {
             attackZone.size = new Vector2 (0.8f, 1.3f);
             attackZone.offset = new Vector2 (0f, 0.5f);
-        } else if (animator.GetFloat("Y") < 0)
+        } else if (animator.GetFloat("AttackY") < 0)
         {
             attackZone.size = new Vector2 (0.8f, 1.3f);
             attackZone.offset = new Vector2 (0f, -0.7f);
         }
+    }
 
-        yield return new WaitForSeconds(0.4f);
-        attackZone.enabled = false;
+    public void EndAttack()
+    {
+        sword.SetActive(false);
         animator.SetBool("isAttacking", false);
     }
-    void OnTriggerEnter2D(Collider2D collision)
+    
+    public void EndHurt()
     {
-        return;
+        animator.SetBool("IsHurt", false);
     }
 }
