@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEditor.Build.Content;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -6,6 +7,7 @@ public class MainManager : MonoBehaviour
 {
     public static MainManager Instance;
     public string playerName;
+    private TextMeshProUGUI playerNameText;
     void Awake()
     {
         if (Instance != null)
@@ -22,7 +24,11 @@ public class MainManager : MonoBehaviour
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        return;
+        if (scene.buildIndex != 0)
+        {
+            playerNameText = GameObject.Find("UI").transform.Find("PlayerName").GetComponent<TextMeshProUGUI>();
+            playerNameText.text = playerName;
+        }
     }
 
     

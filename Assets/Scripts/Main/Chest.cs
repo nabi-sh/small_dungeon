@@ -3,6 +3,7 @@ using UnityEngine;
 public class Chest : MonoBehaviour
 {
     public PlayerControl playerControl;
+    public GameObject winScreen;
     void Start()
     {
         playerControl = GameObject.Find("Player").GetComponent<PlayerControl>();
@@ -12,6 +13,9 @@ public class Chest : MonoBehaviour
         if (collision.CompareTag("Player") && playerControl.hasKey)
         {
             Debug.Log("WINNN");
+            winScreen.SetActive(true);
+            AudioManager.Instance.audioSource.PlayOneShot(AudioManager.Instance.chestOpenSound);
+            Time.timeScale = 0f;
         }
     }
 }

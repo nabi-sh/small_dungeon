@@ -6,6 +6,7 @@ public class AudioManager : MonoBehaviour
     public AudioClip playerHurtSound;
     public AudioSource audioSource;
     public AudioClip keyPickupSound;
+    public AudioClip chestOpenSound;
     public static AudioManager Instance;
     
     void Awake()

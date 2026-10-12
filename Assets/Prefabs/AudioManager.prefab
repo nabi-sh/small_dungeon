@@ -49,6 +49,7 @@ MonoBehaviour:
   playerHurtSound: {fileID: 8300000, guid: aea776f67c5b8474da4863bbbdd651ce, type: 3}
   audioSource: {fileID: 0}
   keyPickupSound: {fileID: 8300000, guid: aebd180984e9c5a4cba9719940688fd9, type: 3}
+  chestOpenSound: {fileID: 8300000, guid: 043ae0e8ad73277498f4791d12aacd68, type: 3}
 --- !u!82 &1357610634643809014
 AudioSource:
   m_ObjectHideFlags: 0
