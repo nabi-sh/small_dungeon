@@ -5,7 +5,7 @@ using UnityEngine;
 public class Slime : Enemy // INHERITANCE
 {
     private int health = 5;
-    private float attackCooldown = 2f;
+    private float attackCooldown = 1.5f;
     private PlayerControl player;
     private float knockback = 500;
     public override int Health { // ENCAPSULATION
@@ -28,7 +28,7 @@ public class Slime : Enemy // INHERITANCE
         player.animator.SetFloat("HurtX", movingDir.x);
         player.animator.SetFloat("HurtY", movingDir.y);
         
-        player.audioSource.Play();
+        AudioManager.Instance.audioSource.PlayOneShot(AudioManager.Instance.playerHurtSound);
         rb.AddForce(-movingDir * knockback, ForceMode2D.Force);
         player.rb.AddForce(movingDir * knockback, ForceMode2D.Force);
         player.Health -= 1;

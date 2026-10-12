@@ -6,6 +6,7 @@ using UnityEngine.Rendering;
 
 public class PlayerControl : MonoBehaviour
 {
+
     [SerializeField] private int health = 5;
     public int Health { //ENCAPSULATION
         get => health;
@@ -20,17 +21,17 @@ public class PlayerControl : MonoBehaviour
         }
     }
     [SerializeField] private float speed = 5f;
+    public GameObject playerDeathAnimation;
     private Vector2 movement;
     public Rigidbody2D rb;
     public Animator animator;
     private float attackCooldown = 0.5f;
     private float timeSinceAttack = 0;
+    public bool hasKey = false;
     private BoxCollider2D attackZone;
     private GameObject sword;
-    public AudioSource audioSource;
     void Awake()
     {
-        audioSource = GetComponent<AudioSource>();
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
     }
@@ -43,6 +44,29 @@ public class PlayerControl : MonoBehaviour
         attackZone.offset = new Vector2 (0f, -0.5f);
         sword.SetActive(false);
     }
+    
+    private void FixedUpdate()
+    {
+        timeSinceAttack += Time.fixedDeltaTime;
+        if (animator.GetBool("isAttacking") && animator.GetBool("IsHurt"))
+        {
+            animator.SetBool("isAttacking",false);
+            Debug.Log("Attack Hurt annimation conflict fixed");
+        }
+        if(!animator.GetBool("isAttacking") && !animator.GetBool("IsHurt")) {
+            rb.MovePosition(rb.position + movement * Time.fixedDeltaTime * speed);
+        }
+    }
+    void Update()
+    {
+        if(health <= 0)
+        {
+            Instantiate(playerDeathAnimation, transform.position, transform.rotation);
+            Destroy(gameObject);
+        }
+    }
+
+    // ==================== input system methods ====================
     private void OnMovement(InputValue input)
     {
         movement = input.Get<Vector2>();
@@ -60,7 +84,7 @@ public class PlayerControl : MonoBehaviour
     }
     private void OnAttack()
     {
-        if(timeSinceAttack >= attackCooldown)
+        if(timeSinceAttack >= attackCooldown && !animator.GetBool("IsHurt"))
         {
             if (animator.GetFloat("X") > 0)
             {
@@ -81,18 +105,6 @@ public class PlayerControl : MonoBehaviour
             }
             animator.SetBool("isAttacking", true);
             timeSinceAttack = 0;
-        }
-    }
-    private void FixedUpdate()
-    {
-        timeSinceAttack += Time.fixedDeltaTime;
-        if (animator.GetBool("isAttacking") && animator.GetBool("IsHurt"))
-        {
-            animator.SetBool("isAttacking",false);
-            Debug.Log("Attack Hurt annimation conflict fixed");
-        }
-        if(!animator.GetBool("isAttacking") && !animator.GetBool("IsHurt")) {
-            rb.MovePosition(rb.position + movement * Time.fixedDeltaTime * speed);
         }
     }
     public void StartAttack()

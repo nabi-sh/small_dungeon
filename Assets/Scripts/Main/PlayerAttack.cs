@@ -8,13 +8,11 @@ public class PlayerAttack : MonoBehaviour
     public List<Enemy> enemies = new List<Enemy>();
     private Animator playerAnimator;
     private float knockback = 500;
-    private AudioSource audioSource;
     void OnEnable()
     {
         playerAnimator = GetComponentInParent<Animator>();
         enemies.Clear();
         Debug.Log("List Cleared");
-        audioSource = GetComponent<AudioSource>();
     }
     void OnTriggerEnter2D(Collider2D collision)
     {
@@ -24,7 +22,7 @@ public class PlayerAttack : MonoBehaviour
             if(enemy != null && !enemies.Contains(enemy))
             {
                 enemy.Health -= 3;
-                audioSource.Play();
+                AudioManager.Instance.audioSource.PlayOneShot(AudioManager.Instance.playerHitSound);
                 enemy.isHurt = true;
                 enemy.rb.linearVelocity = new Vector2 (0, 0);
                 enemy.rb.AddForce(new Vector2 (playerAnimator.GetFloat("AttackX"), playerAnimator.GetFloat("AttackY")) * knockback, ForceMode2D.Force);
